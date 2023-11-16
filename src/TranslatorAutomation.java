@@ -1,4 +1,5 @@
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,10 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.*;
-
-
 public class TranslatorAutomation {
+
     public static void main(String[] args) {
         // Set the path of the ChromeDriver executable
         System.setProperty("webdriver.chrome.driver", "chromedriver-mac-arm64/chromedriver");
@@ -26,6 +25,7 @@ public class TranslatorAutomation {
 
         // region Read Quotes ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+        // Navigate to the quotes page and read the content
         driver.get("https://blog.empuls.io/famous-scientists-quotes/");
         try {
             WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -33,8 +33,10 @@ public class TranslatorAutomation {
             // Wait until the page loads
             String orderedList = "//*[@id=\"main-content\"]/div/section[2]/div/div[1]/article/section[1]/ol";
             waitForElementVisible(wait, driver, orderedList);
+
             // Read the text of the translation result
             String listText = readElementText(wait, driver, orderedList);
+
             // Call the function to write to Excel
             writeStringToExcel(listText, "output.xls");
 
@@ -45,6 +47,7 @@ public class TranslatorAutomation {
 
         // region Google Translator ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+        // Navigate to Google Translator and translate the content
         driver.get("https://translate.google.com/?hl=en&tab=TT");
 
         try {
@@ -72,7 +75,7 @@ public class TranslatorAutomation {
             clickElement(wait, driver, closeLanguageDropdownButton);
             clickElement(wait, driver, closeLanguageDropdownButton);
 
-            // Replace "output.xls" with the actual Excel file name
+            // Reading "output.xls" file
             List<String> lines = readExcelFile("output.xls");
 
             List<String> translatedTextList = new ArrayList<>();
@@ -110,6 +113,7 @@ public class TranslatorAutomation {
 
         // region Reverso Translator ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+        // Navigate to Reverso Translator and translate the content
         driver.get("https://www.reverso.net/text-translation");
 
         try {
@@ -136,7 +140,7 @@ public class TranslatorAutomation {
             clickElement(wait, driver, closeLanguageDropdownButton);
             clickElement(wait, driver, closeLanguageDropdownButton);
 
-            // Replace "output.xls" with the actual Excel file name
+            // Reading "output.xls" file
             List<String> lines = readExcelFile("output.xls");
 
             List<String> translatedTextList = new ArrayList<>();
@@ -177,18 +181,20 @@ public class TranslatorAutomation {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }  finally {
+        } finally {
             driver.quit();
         }
         // endregion |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     }
 
     private static void clickElement(WebDriverWait wait, WebDriver driver, String xpath) {
+        // Click on the element after it becomes clickable
         WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
         element.click();
     }
 
     private static void typeIntoInputField(WebDriverWait wait, WebDriver driver, String xpath, String text) {
+        // Type the specified text into the input field
         WebElement inputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
         inputField.click();
         inputField.clear();
@@ -196,15 +202,18 @@ public class TranslatorAutomation {
     }
 
     private static void waitForElementVisible(WebDriverWait wait, WebDriver driver, String xpath) {
+        // Wait until the specified element becomes visible
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
     }
 
     private static String readElementText(WebDriverWait wait, WebDriver driver, String xpath) {
+        // Read and return the text of the specified element
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
         return element.getText();
     }
 
     private static void writeStringToExcel(String multilineString, String fileName) {
+        // Write a multiline string to an Excel file
         try (Workbook workbook = new HSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Sheet1");
 
