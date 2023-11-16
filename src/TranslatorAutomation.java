@@ -177,6 +177,8 @@ public class TranslatorAutomation {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }  finally {
+            driver.quit();
         }
         // endregion |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     }
